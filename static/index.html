@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <style>
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        h1 {
+            background-color: #4a90e2;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            font-size: 24px;
+        }
+        .chatbox {
+            flex-grow: 1;
+            border: none;
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #f4f7fc;
+        }
+        .chatbox p {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .user-message {
+            background-color: #d1e7dd;
+            text-align: right;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #f8d7da;
+            text-align: left;
+            margin-right: auto;
+        }
+        form {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-right: 10px;
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+            }
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>AI Chatbot 🧑‍🏫</h1>
+
+    <div class="chatbox" id="chatbox">
+        <p class="bot-message"><strong>Bot:</strong> Hello, how can I help you?</p>
+    </div>
+
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Type a message..." required>
+        <button type="submit">Send</button>
+    </form>
+</div>
+
+<script>
+    const chatbox = document.getElementById('chatbox');
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Get the user input
+        const userMessage = userInput.value;
+
+        // Display user's message in the chatbox
+        chatbox.innerHTML += `<p class="user-message"><strong>You:</strong> ${userMessage}</p>`;
+
+        // Clear the input field
+        userInput.value = '';
+
+        // Send the user input to the backend (Python)
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMessage })
+        });
+
+        const data = await response.json();
+
+        // Display bot's response
+        chatbox.innerHTML += `<p class="bot-message"><strong>Bot:</strong> ${data.reply}</p>`;
+
+        // Scroll to the bottom
+        chatbox.scrollTop = chatbox.scrollHeight;
+    });
+</script>
+
+</body>
+</html>
